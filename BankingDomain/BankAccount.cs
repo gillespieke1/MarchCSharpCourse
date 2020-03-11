@@ -14,12 +14,15 @@ namespace BankingDomain
         {
             if (amounttoWithdraw > currentBalance)
             {
-                return;
+                throw new OverdraftException();
             }
-            currentBalance -= amounttoWithdraw;
+            else
+            {
+                currentBalance -= amounttoWithdraw;
+            }
         }
 
-        public void Deposit(decimal amounttoDeposit)
+        public virtual void Deposit(decimal amounttoDeposit)
         {
             currentBalance += amounttoDeposit; 
         }
