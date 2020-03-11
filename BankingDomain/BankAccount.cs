@@ -4,6 +4,17 @@ namespace BankingDomain
 {
     public class BankAccount
     {
+        private ICalculateBonuses BonusCalculator;
+
+        public BankAccount(ICalculateBonuses bonusCalculator)
+        {
+            BonusCalculator = bonusCalculator;
+        }
+
+        //public BankAccount()
+        //{
+        //}
+
         private decimal currentBalance = 7000;
         public decimal GetBalance()
         {
@@ -24,7 +35,9 @@ namespace BankingDomain
 
         public virtual void Deposit(decimal amounttoDeposit)
         {
-            currentBalance += amounttoDeposit; 
+            // WTCYWYH
+            decimal bonus = BonusCalculator.GetBonusFor(this, amounttoDeposit);
+            currentBalance += amounttoDeposit + bonus; 
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BankingDomain;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,19 +9,18 @@ namespace BankingTests
 {
     public class GoldAccountTests
     {
-        [Theory]
-        [InlineData(100, 10)]
-        [InlineData(1000, 100)]
-        public void DepositsGetTheBonus(decimal amount, decimal bonus)
+        [Fact]
+        public void TheBonusCalculatorIsUsedToCalculateBonuses()
         {
-            var account = new GoldAccount();
-            var initialBalance = account.GetBalance();
+            var stubbedBonusCalculator = new Mock<ICalculateBonuses>();
 
-            account.Deposit(amount);
+            var account = new BankAccount(stubbedBonusCalculator.Object);
+            stubbedBonusCalculator.Setup(b => b.GetBonusFor(account, 100)).Returns(42);
+            var openingBalance = account.GetBalance();
 
-            Assert.Equal(
-                initialBalance + amount + bonus,
-                account.GetBalance());
+            account.Deposit(100);
+
+            Assert.Equal(142 + openingBalance, account.GetBalance());
         }
     }
 }
