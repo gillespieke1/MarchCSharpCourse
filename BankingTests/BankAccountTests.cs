@@ -1,4 +1,5 @@
 ﻿using BankingDomain;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace BankingTests
 
         public BankAccountTests()
         {
-            account = new BankAccount();
+            account = new BankAccount(new DummyBonusCalculator(), new Mock<INotifyTheFeds>().Object);
         }
 
         [Fact]
@@ -56,11 +57,11 @@ namespace BankingTests
             // Act - When
             try
             {
-                account.Withdraw(openingBalance + 1);              
+                account.Withdraw(openingBalance + 1);
             }
             catch (Exception)
             {
-                throw;
+                // gulp! (intentionally swallowed so we can see the state)
             }
 
             // Assert - Then
@@ -72,9 +73,13 @@ namespace BankingTests
         {
             Assert.Throws<OverdraftException>(() => account.Withdraw(account.GetBalance() + 1));
         }
-        public decimal GetBonusFor(BankAccount bankAccount, decimal amountToDeposit)
+
+        public class DummyBonusCalculator : ICalculateBonuses
         {
-            return 0;
+            public decimal GetBonusFor(IProvideBalances bankAccount, decimal amountToDeposit)
+            {
+                return 0;
+            }
         }
     }
 }

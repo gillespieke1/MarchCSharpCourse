@@ -2,14 +2,18 @@
 
 namespace BankingDomain
 {
-    public class BankAccount
+    public class BankAccount : IProvideBalances
     {
         private ICalculateBonuses BonusCalculator;
+        private INotifyTheFeds FedNotifier;
 
-        public BankAccount(ICalculateBonuses bonusCalculator)
+        public BankAccount(ICalculateBonuses bonusCalculator, INotifyTheFeds fedNotifier)
         {
             BonusCalculator = bonusCalculator;
+            FedNotifier = fedNotifier;
         }
+
+
 
         //public BankAccount()
         //{
@@ -30,6 +34,7 @@ namespace BankingDomain
             else
             {
                 currentBalance -= amounttoWithdraw;
+                FedNotifier.NotifyOfWithdrawal(this, amounttoWithdraw);
             }
         }
 
